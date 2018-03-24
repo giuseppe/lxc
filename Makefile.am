@@ -3,8 +3,8 @@
 ACLOCAL_AMFLAGS = -I config
 
 LIBTOOL_DEPS = @LIBTOOL_DEPS@
-SUBDIRS = config src templates doc hooks
-DIST_SUBDIRS = config src templates doc hooks
+SUBDIRS = libocispec config src templates doc hooks
+DIST_SUBDIRS = libocispec config src templates doc hooks
 EXTRA_DIST = \
 	autogen.sh \
 	lxc.spec \

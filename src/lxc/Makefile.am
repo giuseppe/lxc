@@ -166,6 +166,7 @@ AM_CFLAGS=-DLXCROOTFSMOUNT=\"$(LXCROOTFSMOUNT)\" \
 	-DDEFAULT_CGROUP_PATTERN=\"$(DEFAULT_CGROUP_PATTERN)\" \
 	-DRUNTIME_PATH=\"$(RUNTIME_PATH)\" \
 	-DSBINDIR=\"$(SBINDIR)\" \
+	-I $(top_srcdir)/libocispec/src \
 	-I $(top_srcdir)/src \
 	-I $(top_srcdir)/src/lxc \
 	-I $(top_srcdir)/src/lxc/storage \
@@ -196,7 +197,7 @@ liblxc_la_LDFLAGS = \
 	-Wl,-soname,liblxc.so.$(firstword $(subst ., ,@LXC_ABI@)) \
 	-version-info @LXC_ABI_MAJOR@
 
-liblxc_la_LIBADD = $(CAP_LIBS) $(SELINUX_LIBS) $(SECCOMP_LIBS)
+liblxc_la_LIBADD = ../../libocispec/libocispec.la $(CAP_LIBS) $(SELINUX_LIBS) $(SECCOMP_LIBS) $(YAJL_LIBS)
 
 bin_SCRIPTS=
 
@@ -243,7 +244,7 @@ AM_LDFLAGS = -Wl,-E
 if ENABLE_RPATH
 AM_LDFLAGS += -Wl,-rpath -Wl,$(libdir)
 endif
-LDADD=liblxc.la @CAP_LIBS@ @SELINUX_LIBS@ @SECCOMP_LIBS@
+LDADD=../../libocispec/libocispec.la liblxc.la @CAP_LIBS@ @SELINUX_LIBS@ @SECCOMP_LIBS@ @YAJL_LIBS@
 
 if ENABLE_TOOLS
 lxc_attach_SOURCES = tools/lxc_attach.c tools/arguments.c tools/tool_utils.c
@@ -298,7 +299,7 @@ endif
 endif
 
 init_lxc_static_LDFLAGS = -all-static
-init_lxc_static_LDADD = @CAP_LIBS@
+init_lxc_static_LDADD = ../../libocispec/libocispec.la @CAP_LIBS@
 init_lxc_static_CFLAGS = $(AM_CFLAGS) -DNO_LXC_CONF
 endif
 endif

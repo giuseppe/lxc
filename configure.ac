@@ -38,8 +38,10 @@ AC_SUBST([LXC_ABI_MICRO], [lxc_abi_micro])
 AC_SUBST([LXC_ABI], [lxc_abi])
 
 AC_CONFIG_SRCDIR([configure.ac])
+AC_CONFIG_MACRO_DIRS([config])
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_HEADERS([src/config.h])
+AX_SUBDIRS_CONFIGURE([libocispec], [CFLAGS='-fPIC'], [], [], [])
 AM_INIT_AUTOMAKE([-Wall -Werror -Wno-portability subdir-objects])
 AC_CANONICAL_HOST
 AM_PROG_CC_C_O
@@ -599,6 +601,9 @@ AC_CHECK_FUNCS([setns pivot_root sethostname unshare rand_r confstr faccessat ge
 AC_CHECK_LIB(pthread, main)
 AC_CHECK_FUNCS(statvfs)
 AC_CHECK_LIB(util, openpty)
+AC_CHECK_LIB(yajl, yajl_tree_parse, [YAJL_LIBS="-l yajl"], [AC_MSG_ERROR([*** libyajl not found.])])
+AC_SUBST([YAJL_LIBS], [-lyajl])
+
 AC_CHECK_FUNCS([openpty hasmntopt setmntent endmntent utmpxname])
 AC_CHECK_FUNCS([getline],
 	AM_CONDITIONAL(HAVE_GETLINE, true)

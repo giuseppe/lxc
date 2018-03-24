@@ -23,6 +23,8 @@
 
 set -x
 
+git submodule update --init --recursive
+
 test -d autom4te.cache && rm -rf autom4te.cache
 libtoolize || exit 1
 aclocal -I config || exit 1
