@@ -54,6 +54,7 @@
 #include "parse.h"
 #include "storage.h"
 #include "utils.h"
+#include "oci_runtime_spec.h"
 
 #if HAVE_IFADDRS_H
 #include <ifaddrs.h>
@@ -2358,6 +2359,23 @@ static int lxc_config_readline(char *buffer, struct lxc_conf *conf)
 	return parse_line(buffer, &c);
 }
 
+static int lxc_load_oci_configuration(const char *file, struct lxc_conf *conf)
+{
+	parser_error err = NULL;
+	oci_container *container;
+
+	container = oci_container_parse_file (file, NULL, &err);
+	free(err);
+	if (container == NULL)
+		return -1;
+
+        conf->execute_cmd = strdup(container->process->args[0]);
+        conf->init_cwd = strdup(container->process->cwd);
+
+	free_oci_container(container);
+	return 0;
+}
+
 int lxc_config_read(const char *file, struct lxc_conf *conf, bool from_include)
 {
 	int ret;
@@ -2369,6 +2387,10 @@ int lxc_config_read(const char *file, struct lxc_conf *conf, bool from_include)
 	ret = access(file, R_OK);
 	if (ret < 0)
 		return -1;
+
+	/* It was successfully loaded as an OCI file. */
+	if (lxc_load_oci_configuration (file, conf) == 0)
+          return 0;
 
 	/* Catch only the top level config file name in the structure. */
 	if (!conf->rcfile)
